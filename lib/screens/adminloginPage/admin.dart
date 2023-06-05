@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 
 class AdminLogInPage extends StatefulWidget {
-  AdminLogInPage({super.key});
+  const AdminLogInPage({super.key});
 
   @override
   State<AdminLogInPage> createState() => _AdminLogInPageState();
@@ -15,8 +15,6 @@ class _AdminLogInPageState extends State<AdminLogInPage> {
 
   final passwordController = TextEditingController();
 
-  String? _errorMessage;
-
   void _login() async {
     if (usernameController.text == '' || passwordController.text == '') return;
     final username = usernameController.text.trim();
@@ -26,6 +24,7 @@ class _AdminLogInPageState extends State<AdminLogInPage> {
         await AdminApi.authenticate(username.toLowerCase(), password);
 
     if (errorMessage == null) {
+      // ignore: use_build_context_synchronously
       Navigator.of(context).pushReplacementNamed('/home');
     } else {
       usernameController.text = '';
@@ -35,7 +34,7 @@ class _AdminLogInPageState extends State<AdminLogInPage> {
         toastLength: Toast.LENGTH_SHORT,
         gravity: ToastGravity.BOTTOM,
         timeInSecForIosWeb: 2,
-        backgroundColor: Color.fromARGB(255, 226, 30, 30),
+        backgroundColor: const Color.fromARGB(255, 226, 30, 30),
         textColor: Colors.white,
         fontSize: 16.0,
       );

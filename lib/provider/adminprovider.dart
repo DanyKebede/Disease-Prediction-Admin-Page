@@ -34,7 +34,8 @@ class AdminApi {
     );
 
     if (response.statusCode == 200) {
-      print('Password changed successfully.');
+      // print('Password changed successfully.');
+      return null;
     } else {
       final errorData = json.decode(response.body);
       return errorData['error'];

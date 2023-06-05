@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+import 'package:flutter/foundation.dart';
 import 'dart:convert';
 
 import './adminprovider.dart';
@@ -13,9 +13,11 @@ class DoctorProvider extends ChangeNotifier {
     try {
       await deleteDoctor(id);
       loadDoctors();
-      print('Deleted doctor with ID: $id');
+      // print('Deleted doctor with ID: $id');
     } catch (e) {
-      print('Error deleting doctor: $e');
+      if (kDebugMode) {
+        print('Error deleting doctor: $e');
+      }
     }
   }
 
@@ -40,12 +42,11 @@ class DoctorProvider extends ChangeNotifier {
       );
       if (response.statusCode == 200 || response.statusCode == 201) {
         loadDoctors();
-        print('Doctor Updated successfully');
-      } else {
-        print('Failed to Update doctor');
       }
     } catch (e) {
-      print('Error Updating doctor: $e');
+      if (kDebugMode) {
+        print('Error Updating doctor: $e');
+      }
     }
   }
 
@@ -63,7 +64,9 @@ class DoctorProvider extends ChangeNotifier {
       doctorData = doctors;
       searchResult = doctors;
     } catch (e) {
-      print('Error loading doctors: $e');
+      if (kDebugMode) {
+        print('Error loading doctors: $e');
+      }
     }
 
     notifyListeners();
@@ -89,12 +92,11 @@ class DoctorProvider extends ChangeNotifier {
       );
       if (response.statusCode == 201) {
         loadDoctors();
-        print('Doctor registered successfully');
-      } else {
-        print('Failed to register doctor');
       }
     } catch (e) {
-      print('Error registering doctor: $e');
+      if (kDebugMode) {
+        print('Error registering doctor: $e');
+      }
     }
   }
 

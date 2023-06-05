@@ -1,5 +1,3 @@
-import 'hospital.dart';
-
 class DoctorModel {
   final int? id;
   final int age;

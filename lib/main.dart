@@ -43,9 +43,9 @@ class AdminPage extends StatelessWidget {
           ),
         ),
         debugShowCheckedModeBanner: false,
-        home: AdminLogInPage(),
+        home: const AdminLogInPage(),
         routes: {
-          '/adminlogin': (context) => AdminLogInPage(),
+          '/adminlogin': (context) => const AdminLogInPage(),
           '/home': (context) => const AdminHomePage(),
           '/doctorpage': (context) => const DoctorsPage(),
           '/doctoradd': (context) => const AddDoctorForm(),

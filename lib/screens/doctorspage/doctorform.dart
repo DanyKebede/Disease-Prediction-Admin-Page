@@ -9,6 +9,8 @@ import 'package:image_picker/image_picker.dart';
 import 'package:cloudinary_public/cloudinary_public.dart';
 import 'package:provider/provider.dart';
 
+import '../../provider/hospitalprovider.dart';
+
 class AddDoctorForm extends StatefulWidget {
   const AddDoctorForm({super.key});
 
@@ -17,6 +19,24 @@ class AddDoctorForm extends StatefulWidget {
 }
 
 class _AddDoctorFormState extends State<AddDoctorForm> {
+  Future<List<String>> getHospitalNames(String query) async {
+    try {
+      List<dynamic> data =
+          Provider.of<HospitalProvider>(context, listen: false).hospitaldata;
+      List d = data
+          .where(
+            (element) => element.name.toLowerCase().contains(
+                  query.toLowerCase(),
+                ),
+          )
+          .toList();
+      hospitalIdController.text = d.map((e) => e.id).toList()[0].toString();
+      return d.map((e) => e.name.toString()).toList();
+    } catch (e) {
+      return Iterable<String>.empty().toList();
+    }
+  }
+
   // ignore: prefer_typing_uninitialized_variables
   var doctorId;
   final _formKey = GlobalKey<FormState>();
@@ -51,7 +71,6 @@ class _AddDoctorFormState extends State<AddDoctorForm> {
           await Provider.of<DoctorProvider>(context).fetchDoctorById(doctorId);
       nameController.text = doctorDetail.name;
       ageController.text = doctorDetail.age.toString();
-      hospitalIdController.text = doctorDetail.hospital.toString();
       phoneController.text = doctorDetail.phone.toString();
       specialityController.text = doctorDetail.speciality;
       imgurlController.text = doctorDetail.imgurl;
@@ -61,6 +80,13 @@ class _AddDoctorFormState extends State<AddDoctorForm> {
       emailController.text = doctorDetail.email;
       hoursController.text = doctorDetail.hours.toString();
       linkController.text = doctorDetail.link.toString();
+      List<dynamic> data =
+          Provider.of<HospitalProvider>(context, listen: false).hospitaldata;
+      List<dynamic> d = data.where((element) {
+        return element.id == doctorDetail.hospital;
+      }).toList();
+
+      hospitalIdController.text = d.map((e) => e.name).toList()[0];
       setState(() {
         imgurlController.text = doctorDetail.imgurl;
       });
@@ -76,7 +102,6 @@ class _AddDoctorFormState extends State<AddDoctorForm> {
     doctorId = args?['doctorId'];
     if (doctorId != null) {
       loadDoctorById();
-
       val = true;
     }
   }
@@ -186,31 +211,45 @@ class _AddDoctorFormState extends State<AddDoctorForm> {
                   const SizedBox(
                     height: 3,
                   ),
-                  TextFormField(
-                    controller: hospitalIdController,
-                    keyboardType: TextInputType.number,
-                    decoration: InputDecoration(
-                      border: OutlineInputBorder(
-                        borderSide: const BorderSide(
-                            color: Color.fromARGB(255, 255, 255, 255),
-                            width: 1),
-                        borderRadius: BorderRadius.circular(10),
-                      ),
-                      hintText: 'Enter hospital ID',
-                      hintStyle: const TextStyle(
-                        fontFamily: 'Inter',
-                        fontSize: 13,
-                        color: Color.fromRGBO(198, 185, 185, 1),
-                      ),
-                    ),
-                    validator: (value) {
-                      if (value!.isEmpty) {
-                        return 'Please enter hospital ID';
+                  Autocomplete<String>(
+                    optionsBuilder: (TextEditingValue textEditingValue) {
+                      if (textEditingValue.text == '') {
+                        return const Iterable<String>.empty();
                       }
-                      return null;
+                      return getHospitalNames(textEditingValue.text);
                     },
-                    onSaved: (value) {
-                      hospitalIdController.text = value!;
+                    fieldViewBuilder: (BuildContext context,
+                        TextEditingController textEditingController,
+                        FocusNode focusNode,
+                        VoidCallback onFieldSubmitted) {
+                      textEditingController.value = hospitalIdController.value;
+                      return TextFormField(
+                        controller: textEditingController,
+                        focusNode: focusNode,
+                        decoration: InputDecoration(
+                          border: OutlineInputBorder(
+                            borderSide: const BorderSide(
+                                color: Color.fromARGB(255, 255, 255, 255),
+                                width: 1),
+                            borderRadius: BorderRadius.circular(10),
+                          ),
+                          hintText: 'Enter hospital name',
+                          hintStyle: const TextStyle(
+                            fontFamily: 'Inter',
+                            fontSize: 13,
+                            color: Color.fromRGBO(198, 185, 185, 1),
+                          ),
+                        ),
+                        validator: (value) {
+                          if (value!.isEmpty) {
+                            return 'Please enter hospital name';
+                          }
+                          return null;
+                        },
+                        onFieldSubmitted: (String value) {
+                          onFieldSubmitted();
+                        },
+                      );
                     },
                   ),
                   const SizedBox(height: 10),

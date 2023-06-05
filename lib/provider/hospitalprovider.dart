@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+import 'package:flutter/foundation.dart';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 
@@ -14,7 +14,9 @@ class HospitalProvider extends ChangeNotifier {
       await deleteHospital(id);
       loadHospitals();
     } catch (e) {
-      print('Error deleting Hospital: $e');
+      if (kDebugMode) {
+        print('Error deleting Hospital: $e');
+      }
     }
   }
 
@@ -39,11 +41,11 @@ class HospitalProvider extends ChangeNotifier {
       );
       if (response.statusCode == 200 || response.statusCode == 201) {
         loadHospitals();
-      } else {
-        print('Failed to Update Hospital');
       }
     } catch (e) {
-      print('Error Updating Hospital: $e');
+      if (kDebugMode) {
+        print('Error Updating Hospital: $e');
+      }
     }
   }
 
@@ -57,11 +59,13 @@ class HospitalProvider extends ChangeNotifier {
 
   Future<void> loadHospitals() async {
     try {
-      final Hospitals = await fetchHospitals();
-      hospitaldata = Hospitals;
-      searchResult = Hospitals;
+      final hospitals = await fetchHospitals();
+      hospitaldata = hospitals;
+      searchResult = hospitals;
     } catch (e) {
-      print('Error loading Hospital: $e');
+      if (kDebugMode) {
+        print('Error loading Hospital: $e');
+      }
     }
 
     notifyListeners();
@@ -88,12 +92,11 @@ class HospitalProvider extends ChangeNotifier {
       );
       if (response.statusCode == 201) {
         loadHospitals();
-        print('Hospital registered successfully');
-      } else {
-        print('Failed to register Hospital');
       }
     } catch (e) {
-      print('Error registering Hospital: $e');
+      if (kDebugMode) {
+        print('Error registering Hospital: $e');
+      }
     }
   }
 
