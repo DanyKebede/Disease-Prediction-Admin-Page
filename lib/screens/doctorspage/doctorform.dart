@@ -3,6 +3,7 @@ import 'dart:io';
 
 import 'package:adminpage/models/doctormodel.dart';
 import 'package:adminpage/provider/doctorprovider.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:image_picker/image_picker.dart';
@@ -15,10 +16,10 @@ class AddDoctorForm extends StatefulWidget {
   const AddDoctorForm({super.key});
 
   @override
-  _AddDoctorFormState createState() => _AddDoctorFormState();
+  AddDoctorFormState createState() => AddDoctorFormState();
 }
 
-class _AddDoctorFormState extends State<AddDoctorForm> {
+class AddDoctorFormState extends State<AddDoctorForm> {
   Future<List<String>> getHospitalNames(String query) async {
     try {
       List<dynamic> data =
@@ -33,7 +34,7 @@ class _AddDoctorFormState extends State<AddDoctorForm> {
       hospitalIdController.text = d.map((e) => e.id).toList()[0].toString();
       return d.map((e) => e.name.toString()).toList();
     } catch (e) {
-      return Iterable<String>.empty().toList();
+      return const Iterable<String>.empty().toList();
     }
   }
 
@@ -81,6 +82,7 @@ class _AddDoctorFormState extends State<AddDoctorForm> {
       hoursController.text = doctorDetail.hours.toString();
       linkController.text = doctorDetail.link.toString();
       List<dynamic> data =
+          // ignore: use_build_context_synchronously
           Provider.of<HospitalProvider>(context, listen: false).hospitaldata;
       List<dynamic> d = data.where((element) {
         return element.id == doctorDetail.hospital;
@@ -91,12 +93,15 @@ class _AddDoctorFormState extends State<AddDoctorForm> {
         imgurlController.text = doctorDetail.imgurl;
       });
     } catch (e) {
-      print('Error loading doctors: $e');
+      if (kDebugMode) {
+        print('Error loading doctors: $e');
+      }
     }
   }
 
   @override
   void didChangeDependencies() {
+    super.didChangeDependencies();
     final args =
         ModalRoute.of(context)!.settings.arguments as Map<String, dynamic>?;
     doctorId = args?['doctorId'];
@@ -573,7 +578,7 @@ class _AddDoctorFormState extends State<AddDoctorForm> {
                     onPressed: () async {
                       val = true;
                       final pickedFile = await ImagePicker()
-                          .getImage(source: ImageSource.gallery);
+                          .pickImage(source: ImageSource.gallery);
                       if (pickedFile != null) {
                         setState(() {
                           imgurlController.text = pickedFile.path;
@@ -611,7 +616,7 @@ class _AddDoctorFormState extends State<AddDoctorForm> {
                         try {
                           imageUrl = await _uploadImage(imgurlController.text)
                               .timeout(const Duration(seconds: 5));
-                        } on TimeoutException catch (e) {
+                        } on TimeoutException catch (_) {
                           Fluttertoast.showToast(
                             msg: 'Image upload timed out',
                             toastLength: Toast.LENGTH_SHORT,
@@ -621,9 +626,10 @@ class _AddDoctorFormState extends State<AddDoctorForm> {
                             textColor: Colors.white,
                             fontSize: 16.0,
                           );
-                          print('Upload image timed out after 3 seconds: $e');
                         } catch (e) {
-                          print('Error uploading image: $e');
+                          if (kDebugMode) {
+                            print('Error uploading image: $e');
+                          }
                         }
                         DoctorModel data = DoctorModel(
                           id: doctorId,
@@ -666,8 +672,10 @@ class _AddDoctorFormState extends State<AddDoctorForm> {
                           textColor: Colors.white,
                           fontSize: 16.0,
                         );
+                        // ignore: use_build_context_synchronously
                         Navigator.of(context).popUntil(
                             (route) => route.settings.name == '/home');
+                        // ignore: use_build_context_synchronously
                         Navigator.of(context).pushNamed('/doctorpage');
                       }
                     },

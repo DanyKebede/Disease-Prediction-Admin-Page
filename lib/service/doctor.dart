@@ -64,6 +64,7 @@
 // ];
 
 import 'dart:convert';
+import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' as http;
 
 import '../models/doctormodel.dart';
@@ -75,7 +76,9 @@ Future<void> loadDoctors() async {
     final doctors = await fetchDoctors();
     doctorData = doctors;
   } catch (e) {
-    print('Error loading doctors: $e');
+    if (kDebugMode) {
+      print('Error loading doctors: $e');
+    }
   }
 }
 
@@ -95,12 +98,10 @@ Future<void> registerDoctor(DoctorModel doctorData) async {
       },
       body: jsonEncode(doctorData.toJson()),
     );
-    if (response.statusCode == 201) {
-      print('Doctor registered successfully');
-    } else {
-      print('Failed to register doctor');
-    }
+    if (response.statusCode == 201) {}
   } catch (e) {
-    print('Error registering doctor: $e');
+    if (kDebugMode) {
+      print('Error registering doctor: $e');
+    }
   }
 }

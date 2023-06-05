@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:provider/provider.dart';
@@ -200,7 +201,9 @@ class _HospitalsPageState extends State<HospitalsPage> {
                                               fontSize: 16.0,
                                             );
                                           } catch (e) {
-                                            print("Delete Failed!");
+                                            if (kDebugMode) {
+                                              print("Delete Failed!");
+                                            }
                                           }
 
                                           Navigator.of(context).pop();

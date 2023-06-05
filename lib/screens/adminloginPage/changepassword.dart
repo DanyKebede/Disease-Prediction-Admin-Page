@@ -7,10 +7,10 @@ class ChangePasswordScreen extends StatefulWidget {
   const ChangePasswordScreen({Key? key}) : super(key: key);
 
   @override
-  _ChangePasswordScreenState createState() => _ChangePasswordScreenState();
+  ChangePasswordScreenState createState() => ChangePasswordScreenState();
 }
 
-class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
+class ChangePasswordScreenState extends State<ChangePasswordScreen> {
   final _formKey = GlobalKey<FormState>();
 
   late String _oldPassword;
@@ -44,6 +44,7 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
         textColor: Colors.white,
         fontSize: 16.0,
       );
+      // ignore: use_build_context_synchronously
       Navigator.of(context).pop();
     } else {
       setState(() {
@@ -76,7 +77,7 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
   }
 
   Widget _buildLoading() {
-    return Center(child: CircularProgressIndicator());
+    return const Center(child: CircularProgressIndicator());
   }
 
   Widget _buildForm() {
@@ -114,7 +115,7 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
                 _oldPassword = value!;
               },
             ),
-            SizedBox(height: 16.0),
+            const SizedBox(height: 16.0),
             TextFormField(
               decoration: InputDecoration(
                 filled: true,
@@ -148,7 +149,7 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
                 _newPassword = value;
               },
             ),
-            SizedBox(height: 16.0),
+            const SizedBox(height: 16.0),
             TextFormField(
               decoration: InputDecoration(
                 filled: true,
@@ -204,10 +205,10 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
               ),
             ),
             if (_errorMessage != null) ...[
-              SizedBox(height: 16.0),
+              const SizedBox(height: 16.0),
               Text(
                 _errorMessage!,
-                style: TextStyle(color: Colors.red),
+                style: const TextStyle(color: Colors.red),
               ),
             ],
           ],

@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:provider/provider.dart';
@@ -186,7 +187,9 @@ class _DoctorsPageState extends State<DoctorsPage> {
                                               fontSize: 16.0,
                                             );
                                           } catch (e) {
-                                            print("Delete Failed!");
+                                            if (kDebugMode) {
+                                              print("Delete Failed!");
+                                            }
                                           }
 
                                           Navigator.of(context).pop();

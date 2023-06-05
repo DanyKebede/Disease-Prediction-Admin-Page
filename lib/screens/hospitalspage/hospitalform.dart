@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:io';
 
 import 'package:adminpage/provider/hospitalprovider.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:image_picker/image_picker.dart';
@@ -14,10 +15,10 @@ class AddHospitalForm extends StatefulWidget {
   const AddHospitalForm({super.key});
 
   @override
-  _AddHospitalFormState createState() => _AddHospitalFormState();
+  AddHospitalFormState createState() => AddHospitalFormState();
 }
 
-class _AddHospitalFormState extends State<AddHospitalForm> {
+class AddHospitalFormState extends State<AddHospitalForm> {
   // ignore: prefer_typing_uninitialized_variables
   var hospitalId;
   final _formKey = GlobalKey<FormState>();
@@ -45,28 +46,31 @@ class _AddHospitalFormState extends State<AddHospitalForm> {
 
   Future<void> loadHospitalById() async {
     try {
-      final HospitalModel HospitalDetail =
+      final HospitalModel hospitalDetail =
           await Provider.of<HospitalProvider>(context)
               .fetchHospitalById(hospitalId);
-      nameController.text = HospitalDetail.name;
-      phoneController.text = HospitalDetail.phone.toString();
-      locationController.text = HospitalDetail.location;
-      imgurlController.text = HospitalDetail.imgurl;
-      latController.text = HospitalDetail.lat.toString();
-      lngController.text = HospitalDetail.lng.toString();
-      ratingController.text = HospitalDetail.rating.toString();
-      emailController.text = HospitalDetail.email;
-      hoursController.text = HospitalDetail.hours.toString();
+      nameController.text = hospitalDetail.name;
+      phoneController.text = hospitalDetail.phone.toString();
+      locationController.text = hospitalDetail.location;
+      imgurlController.text = hospitalDetail.imgurl;
+      latController.text = hospitalDetail.lat.toString();
+      lngController.text = hospitalDetail.lng.toString();
+      ratingController.text = hospitalDetail.rating.toString();
+      emailController.text = hospitalDetail.email;
+      hoursController.text = hospitalDetail.hours.toString();
       setState(() {
-        imgurlController.text = HospitalDetail.imgurl;
+        imgurlController.text = hospitalDetail.imgurl;
       });
     } catch (e) {
-      print('Error loading Hospitals: $e');
+      if (kDebugMode) {
+        print('Error loading Hospitals: $e');
+      }
     }
   }
 
   @override
   void didChangeDependencies() {
+    super.didChangeDependencies();
     final args =
         ModalRoute.of(context)!.settings.arguments as Map<String, dynamic>?;
     hospitalId = args?['HospitalId'];
@@ -422,7 +426,7 @@ class _AddHospitalFormState extends State<AddHospitalForm> {
                     onPressed: () async {
                       val = true;
                       final pickedFile = await ImagePicker()
-                          .getImage(source: ImageSource.gallery);
+                          .pickImage(source: ImageSource.gallery);
                       if (pickedFile != null) {
                         setState(() {
                           imgurlController.text = pickedFile.path;
@@ -460,7 +464,7 @@ class _AddHospitalFormState extends State<AddHospitalForm> {
                         try {
                           imageUrl = await _uploadImage(imgurlController.text)
                               .timeout(const Duration(seconds: 5));
-                        } on TimeoutException catch (e) {
+                        } on TimeoutException catch (_) {
                           Fluttertoast.showToast(
                             msg: 'Image upload timed out',
                             toastLength: Toast.LENGTH_SHORT,
@@ -470,9 +474,10 @@ class _AddHospitalFormState extends State<AddHospitalForm> {
                             textColor: Colors.white,
                             fontSize: 16.0,
                           );
-                          print('Upload image timed out after 3 seconds: $e');
                         } catch (e) {
-                          print('Error uploading image: $e');
+                          if (kDebugMode) {
+                            print('Error uploading image: $e');
+                          }
                         }
                         HospitalModel data = HospitalModel(
                           id: hospitalId,
@@ -512,8 +517,10 @@ class _AddHospitalFormState extends State<AddHospitalForm> {
                           fontSize: 16.0,
                         );
 
+                        // ignore: use_build_context_synchronously
                         Navigator.of(context).popUntil(
                             (route) => route.settings.name == '/home');
+                        // ignore: use_build_context_synchronously
                         Navigator.of(context).pushNamed('/hospitalpage');
                       }
                     },
