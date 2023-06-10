@@ -279,7 +279,7 @@ class AddHospitalFormState extends State<AddHospitalForm> {
                       return null;
                     },
                     onSaved: (value) {
-                      latController.text = value!;
+                      lngController.text = value!;
                     },
                   ),
                   const SizedBox(height: 10),
@@ -495,6 +495,7 @@ class AddHospitalFormState extends State<AddHospitalForm> {
                           hours: int.parse(hoursController.text),
                           rating: double.parse(ratingController.text),
                         );
+
                         hospitalId != null
                             // ignore: use_build_context_synchronously
                             ? Provider.of<HospitalProvider>(context,
